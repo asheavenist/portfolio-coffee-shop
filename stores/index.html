@@ -1,169 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Belajar Keranjang Belanja</title>
+  <meta charset="UTF-8">
+  <title>Daftar Produk</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-    }
-
-    /* Keranjang Icon */
-    .cart-icon {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      font-size: 30px;
-      cursor: pointer;
-    }
-
-    .cart-count {
-      position: absolute;
-      top: -8px;
-      right: -8px;
-      background: red;
-      color: white;
-      font-size: 14px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      text-align: center;
-      line-height: 20px;
-    }
-
-    .product {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .cart-section {
-      margin-top: 30px;
-    }
-
-    .cart-item {
-      margin-bottom: 10px;
-    }
-
-    button {
-      cursor: pointer;
-    }
+    body { font-family: sans-serif; padding: 20px; }
+    .produk { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+    .keranjang-icon { position: fixed; top: 20px; right: 20px; cursor: pointer; }
+    .keranjang-icon span { background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -10px; right: -10px; }
+    #keranjang-section { margin-top: 40px; border-top: 2px solid #000; padding-top: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    button { padding: 5px 10px; }
+    #result { margin-top: 20px; padding: 10px; background: #eef; border: 1px solid #99f; }
   </style>
 </head>
+
 <body>
+  <h1>Daftar Produk</h1>
 
-  <h2>Daftar Produk</h2>
-  <div id="product-list"></div>
-
-  <!-- Keranjang Icon -->
-  <div class="cart-icon" onclick="scrollToCart()">
-    🛒<span id="cart-count" class="cart-count">0</span>
+  <div class="keranjang-icon" id="keranjang-icon">
+    🛒 <span id="notifikasi">0</span>
   </div>
 
-  <hr />
+  <div id="daftar-produk"></div>
 
-  <h2>Keranjang Belanja</h2>
-  <form method="POST" action="proses.php" id="cart-form">
-    <div id="cart-section" class="cart-section"></div>
-    <p><strong>Total Harga: Rp <span id="total-price">0</span></strong></p>
-    <button type="submit">Kirim Pesanan</button>
+  <form id="keranjang-form">
+    <section id="keranjang-section">
+      <h2>Keranjang Belanja</h2>
+      <table id="keranjang-tabel">
+        <thead>
+          <tr>
+            <th>Produk</th>
+            <th>Harga</th>
+            <th>Jumlah</th>
+            <th>Subtotal</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"><strong>Total</strong></td>
+            <td id="total-harga">Rp 0</td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+      <button type="submit">Kirim Pesanan</button>
+    </section>
   </form>
 
-  <script>
-    const products = [
-      { id: 1, name: 'Produk A', price: 10000 },
-      { id: 2, name: 'Produk B', price: 15000 },
-      { id: 3, name: 'Produk C', price: 20000 },
-      { id: 4, name: 'Produk D', price: 12000 },
-      { id: 5, name: 'Produk E', price: 18000 }
-    ];
+  <div id="result"></div>
 
-    const cart = {};
-
-    function renderProducts() {
-      const container = document.getElementById('product-list');
-      container.innerHTML = '';
-      products.forEach(product => {
-        const el = document.createElement('div');
-        el.className = 'product';
-        el.innerHTML = `
-          ${product.name} - Rp ${product.price}
-          <button onclick="addToCart(${product.id})">🛒</button>
-        `;
-        container.appendChild(el);
-      });
-    }
-
-    function renderCart() {
-      const cartSection = document.getElementById('cart-section');
-      const form = document.getElementById('cart-form');
-      cartSection.innerHTML = '';
-      let total = 0;
-      for (const id in cart) {
-        const item = cart[id];
-        const subtotal = item.price * item.quantity;
-        total += subtotal;
-
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `
-          ${item.name} - Rp ${item.price} x 
-          <button type="button" onclick="updateQuantity(${id}, -1)">-</button>
-          <span>${item.quantity}</span>
-          <button type="button" onclick="updateQuantity(${id}, 1)">+</button>
-          = Rp ${subtotal}
-          <button type="button" onclick="removeFromCart(${id})">🗑️</button>
-          <input type="hidden" name="produk[${id}][name]" value="${item.name}">
-          <input type="hidden" name="produk[${id}][price]" value="${item.price}">
-          <input type="hidden" name="produk[${id}][quantity]" value="${item.quantity}">
-        `;
-        cartSection.appendChild(div);
-      }
-
-      document.getElementById('total-price').textContent = total;
-      updateCartIcon();
-    }
-
-    function addToCart(id) {
-      const product = products.find(p => p.id === id);
-      if (!cart[id]) {
-        cart[id] = { ...product, quantity: 0 };
-      }
-      cart[id].quantity++;
-      renderCart();
-    }
-
-    function updateQuantity(id, delta) {
-      if (cart[id]) {
-        cart[id].quantity += delta;
-        if (cart[id].quantity <= 0) {
-          delete cart[id];
-        }
-        renderCart();
-      }
-    }
-
-    function removeFromCart(id) {
-      delete cart[id];
-      renderCart();
-    }
-
-    function updateCartIcon() {
-      const count = Object.values(cart).reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('cart-count').textContent = count;
-    }
-
-    function scrollToCart() {
-      document.getElementById('cart-form').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    renderProducts();
-    renderCart();
-  </script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
