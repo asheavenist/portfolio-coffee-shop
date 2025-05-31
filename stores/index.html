@@ -5,14 +5,14 @@
   <title>Daftar Produk</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
-    .produk { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
+    .products { border: 1px solid #ddd; padding: 10px; margin: 10px 0; }
     .keranjang-icon { position: fixed; top: 20px; right: 20px; cursor: pointer; }
     .keranjang-icon span { background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 12px; position: absolute; top: -10px; right: -10px; }
     #keranjang-section { margin-top: 40px; border-top: 2px solid #000; padding-top: 20px; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     button { padding: 5px 10px; }
-    #result { margin-top: 20px; padding: 10px; background: #eef; border: 1px solid #99f; }
+    #server-result { margin-top: 20px; padding: 10px; background: #eef; border: 1px solid #99f; }
   </style>
 </head>
 
@@ -20,15 +20,15 @@
   <h1>Daftar Produk</h1>
 
   <div class="keranjang-icon" id="keranjang-icon">
-    🛒 <span id="notifikasi">0</span>
+    🛒 <span id="notification">0</span>
   </div>
 
-  <div id="daftar-produk"></div>
+  <div id="products"></div>
 
-  <form id="keranjang-form">
-    <section id="keranjang-section">
+  <section id="keranjang-section">
+    <form id="cart-form">
       <h2>Keranjang Belanja</h2>
-      <table id="keranjang-tabel">
+      <table id="cart-table">
         <thead>
           <tr>
             <th>Produk</th>
@@ -42,16 +42,16 @@
         <tfoot>
           <tr>
             <td colspan="3"><strong>Total</strong></td>
-            <td id="total-harga">Rp 0</td>
+            <td id="total">Rp 0</td>
             <td></td>
           </tr>
         </tfoot>
       </table>
       <button type="submit">Kirim Pesanan</button>
-    </section>
-  </form>
+    </form>
+  </section>
 
-  <div id="result"></div>
+  <div id="server-result"></div>
 
   <script type="module" src="script.js"></script>
 </body>
